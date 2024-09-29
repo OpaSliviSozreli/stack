@@ -3,7 +3,7 @@
 
 #include "struct.h"
 
-void stack_push( stack_t **stk, int size );
-int  stack_pop( stack_t **stk );
+int stack_push( stack_t* stk, stack_element_t value );
+int stack_pop( stack_t* stk );
 
 #endif

@@ -1,23 +1,33 @@
 #include <stdlib.h>
 
-#include "push_and_pop.h"
+#include "push_and_pop.h" 
+#include "my_recalloc.h"
+#include "ctor_and_dtor.h"
 
-void stack_push( stack_t** stk, int size )
+int stack_push( stack_t* stk, stack_element_t value )
 {
-    stack_t* ptr_to_stk = ( stack_t* )calloc( stk->compacity, sizeof( stack_element_t ) );
+    STACK_ASSERT( stk );
+    my_recalloc( stk );
     
-    ptr_to_stk->size = size;
-    ptr_to_stk->data = *stk;
-    *stk = ptr_to_stk;
+    stk->data[stk->size] = value;
+    stk->size++;
+
+    if ( stk->size == 0 )
+        stk->erroe_code = STACK_OVERFLOW;
+
+    STACK_ASSERT( stk );
+    return 0;
 }
 
-int stack_pop( stack_t** stk )
+int stack_pop( stack_t* stk )
 {
-    stack_element_t temp = ( *stk )->size;
+    STACK_ASSERT( stk );
+    my_recalloc( stk );
 
-    stack_t* ptr_to_stk = *stk;
- 
-    *stk = ( *stk )->data;
+    stack_element_t value = stk->data[stk->size];
+    stk->size--;
+    
+    STACK_ASSERT( stk );
 
-    return temp;
+    return value;
 }
