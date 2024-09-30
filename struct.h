@@ -10,6 +10,10 @@ typedef double stack_element_t;
 #endif
 
 #define stack_name stk
+
+const  stack_element_t _LEFT_CANARY_  = 0XEB01DA;
+const  stack_element_t _RIGHT_CANARY_ = 0XE1DAC;
+
 struct stack_t
 {
     ON_DEBUG( const char* file_name )

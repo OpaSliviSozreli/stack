@@ -10,6 +10,7 @@ int stack_push( stack_t* stk, stack_element_t value )
     my_recalloc( stk );
     
     stk->data[stk->size] = value;
+    stk->data[stk->size - 1] = _RIGHT_CANARY_;
     stk->size++;
 
     if ( stk->size == 0 )
@@ -24,7 +25,7 @@ int stack_pop( stack_t* stk )
     STACK_ASSERT( stk );
     my_recalloc( stk );
 
-    stack_element_t value = stk->data[stk->size];
+    stack_element_t value = stk->data[stk->size - 2];
     stk->size--;
     
     STACK_ASSERT( stk );

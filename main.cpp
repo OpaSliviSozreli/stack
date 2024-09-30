@@ -3,7 +3,7 @@
 #include "struct.h"
 #include "ctor_and_dtor.h"
 #include "push_and_pop.h"
-
+#include "verifier_and_dump.h"
 
 #define CHECK_ if ( !err ) err =
 
@@ -38,4 +38,6 @@ int main()
     stack_element_t x = stack_pop( &stk );
 
     stack_dtor( &stk );
+
+    dump( &stk );
 }

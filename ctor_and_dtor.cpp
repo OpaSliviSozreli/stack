@@ -9,9 +9,11 @@ int stack_ctor( stack_t *stk, int compacity, const char* the_stack_name, const c
 {
     my_recalloc( stk );
 
-    stk->data[0] = compacity;
+    stk->data[0] = _LEFT_CANARY_;
+    stk->data[1] = compacity;
     stk->size = 0;
     stk->compacity = 8;
+    stk->data[stk->size - 1] = _RIGHT_CANARY_;
 
     STACK_ASSERT( stk );
 
