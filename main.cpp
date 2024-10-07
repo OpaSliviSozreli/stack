@@ -5,17 +5,16 @@
 #include "push_and_pop.h"
 #include "verifier_and_dump.h"
 
-#define CHECK_ if ( !err ) err =
+#define CHECK_ if ( stk_error != STACK_OK ) stk_error =
 
 int main()
 {
     stack_t stk = {};
     
-    int err = 0;
-    
-    STACK_CTOR( &stk, 10 );
-    CHECK_ STACK_CTOR( &stk, 10 );
+    int stk_error = 0;
 
+    CHECK_ STACK_CTOR( &stk );
+    
     stack_push( &stk, 100 );
     CHECK_ stack_push( &stk, 100 );
 
@@ -31,13 +30,9 @@ int main()
     stack_push( &stk, 500 );
     CHECK_ stack_push( &stk, 500 );
 
-    stack_element_t x = 0;
-
-    stack_push( &stk, x );
-
-    stack_element_t x = stack_pop( &stk );
+    stack_element_t val = stack_pop( &stk );
 
     stack_dtor( &stk );
 
-    dump( &stk );
+    STACK_DUMP( &stk );
 }

@@ -1,44 +1,67 @@
 #include <stdio.h>
 
 #include "verifier_and_dump.h"
-#include "ctor_and_dtor.h"
-#include "struct.h"
 
-int stack_error( stack_t* stk )
+int stack_error( const stack_t* stk )
 {
-    if ( stk != 0 )
-        stk->erroe_code = PTR_IS_ZERO;
+    if ( stk == NULL )
+        return PTR_IS_ZERO;
     if ( stk->size < 0 )
-        stk->erroe_code = STACK_WRONG_SIZE;
-    if ( stk->compacity < 0 )
-        stk->erroe_code = COMPACITY_IS_NEGATIVE;
-    return 0;
+        return STACK_WRONG_SIZE;
+    if ( stk->capacity < 0 )
+        return CAPACITY_IS_NEGATIVE;
+    if ( stk->size > stk->capacity ) 
+        return STACK_OVERFLOW;
+     if ( stk->hash != MurmurHash2( ( char* )stk, 5 ) )
+        return HASH_PROBLEM;
+        
+    return STACK_OK;
 }
 
-int dump( stack_t* stk )
+int dump( stack_t* stk ON_DEBUG( , const char* file, int line ) )
 {
+    ON_DEBUG(
+        stk->file = file;
+        stk->line = line;
+            )
     STACK_ASSERT( stk );
 
-    FILE* log_file = fopen( "log_file", "rb" );
+    FILE* log_file = fopen( "Log_file.txt", "wb" ); 
+
+    setvbuf( log_file, NULL, _IONBF, 0 );
 
     if ( !log_file )
-        stk->erroe_code = CANT_OPEN_LOG_FILE;
-    else
-    {
-        fprintf( log_file, " current error code %d\n", stk->erroe_code );
-        
-        fprintf( log_file, " the data is %0xp\n", stk->data );
+        return CANT_OPEN_LOG_FILE;
+ 
+    fprintf( stderr, "the data is %p\n", stk->data );
 
-        fprintf( log_file, "called from __func__ __LINE__ \n");
-        fprintf( log_file, " named #stk born at __func__ __LINE__ \n");
+    fprintf( stderr, "called from %s %s \n", __func__, __FILE__ );
+    fprintf( stderr, " named stack born at %s %s \n", __func__, __FILE__ );
 
-        fprintf( log_file, "campacity is %d\n", stk->compacity );
+    fprintf( stderr, "capacity is %d\n", stk->capacity );
 
-        fprintf( log_file, "current size is %d\n", stk->size );
+    fprintf( stderr, "current size is %d\n", stk->size );
 
-        for ( size_t i = 0; i < stk->compacity - 1; )
-            fprintf( log_file, "data value is <%f>", stk->data[i] );
-    }
+    fprintf( stderr, "error code is %d\n", stack_error( stk ) );
+
+    fprintf( stderr, "hash is %d\n", stk->hash );
+
+    for ( size_t i = 0; i < ( size_t )stk->capacity - 1; i++ )
+        fprintf( stderr, "[%d] elem: data value is <%f>\n", i, stk->data[i] );
+
+    fclose ( log_file );
 
     STACK_ASSERT( stk );
+
+    return STACK_FUNC_OK; 
+}
+
+int stack_assert_func( stack_t* stk )
+{
+    int stk_error = stack_error( stk );
+
+    if ( stk_error != STACK_OK )
+        return stk_error;
+
+    return STACK_OK;
 }

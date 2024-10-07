@@ -1,16 +1,27 @@
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-#include "my_recalloc.h"
-#include "ctor_and_dtor.h"
+#include "my_realloc.h"
 
-void* my_recalloc( stack_t *stk )
-{   
+void my_realloc( stack_t *stk )
+{                                  
     STACK_ASSERT( stk );
-    if ( stk->size == stk->compacity )
-        stk->data = ( stack_element_t* )realloc( stk->data, ( stk->size * 2 + 2 ) * sizeof( stack_element_t ) );
-        memset( ( stk->data + stk->size + 2 ), 0, ( stk->size - 2 ) * sizeof( stack_element_t ) );
-    if ( stk->size == 0.25 * stk->compacity )
-        stk->data = ( stack_element_t* )realloc( stk->data, stk->size / 2 * sizeof( stack_element_t ) );
+    if ( stk->size == stk->capacity )
+    {
+        stk->data = ( stack_element_t* )realloc( ( char* )stk->data - sizeof( canary_t ), stk->capacity * 2 * sizeof( stack_element_t ) + 2 * sizeof( canary_t ) );
+        set_poison( stk );
+    }
+    if ( stk->size <=  stk->capacity / 4 )
+    { 
+        stk->data = ( stack_element_t* )realloc( ( char* )stk->data - sizeof( canary_t ), stk->capacity / 2 * sizeof( stack_element_t ) + 2 * sizeof( canary_t ) );
+        stk->capacity = stk->capacity / 4;
+    }
     STACK_ASSERT( stk );
+}
+
+void set_poison( stack_t *stk )
+{
+    for ( int i = stk->size; i < stk->capacity; i++ ) 
+        stk->data[i] = POISON; 
 }

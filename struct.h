@@ -2,35 +2,48 @@
 #define _STRUCT_H_
 
 typedef double stack_element_t;
+typedef unsigned long long canary_t;
 
-#ifdef DEFINE
-    #define ON_DEBUG( code ) code
+#ifdef DEBUG
+    #define ON_DEBUG( ... ) __VA_ARGS__
 #else
-    #define ON_DEBUG( code )
+    #define ON_DEBUG( ... )
 #endif
 
-#define stack_name stk
+const  stack_element_t POISON = -666.13;
 
-const  stack_element_t _LEFT_CANARY_  = 0XEB01DA;
-const  stack_element_t _RIGHT_CANARY_ = 0XE1DAC;
+const  canary_t _LEFT_CANARY_  = 0XEB01DA;
+const  canary_t _RIGHT_CANARY_ = 0XE1DAC;
 
 struct stack_t
 {
-    ON_DEBUG( const char* file_name )
+    canary_t left_struct_canary;
     ON_DEBUG( const char* stack_name )
-    ErrorCode erroe_code;
+    ON_DEBUG( const char* file_name )
+    ON_DEBUG( int line )
     stack_element_t* data;
     size_t size;
-    int compacity;
+    int capacity;
+    unsigned int hash;
+    canary_t right_struct_canary;
+};
+
+enum StackStatus // 
+{
+    STACK_FUNC_OK,
+    STACK_FUNC_FAIL    
 };
 
 enum ErrorCode
 {
-    PTR_IS_ZERO = 1,
-    STACK_WRONG_SIZE = 1,
-    COMPACITY_IS_NEGATIVE = 1,
-    STACK_OVERFLOW = 1,
-    CANT_OPEN_LOG_FILE = 1
+    STACK_OK,        
+    SIZE_IS_ZERO,         
+    PTR_IS_ZERO,        
+    STACK_WRONG_SIZE,     
+    CAPACITY_IS_NEGATIVE, 
+    STACK_OVERFLOW,    
+    CANT_OPEN_LOG_FILE,
+    HASH_PROBLEM
 };
 
 #endif
