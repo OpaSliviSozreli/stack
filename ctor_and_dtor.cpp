@@ -12,9 +12,9 @@ int stack_ctor( stack_t *stk ON_DEBUG(, const char* file, int line ) )
             )
 
     stk->size = 0;
-    stk->capacity = 8;
+    stk->capacity = 28;
     stk->data = ( stack_element_t* )calloc( stk->capacity, sizeof( stack_element_t ) );
-
+    fprintf( stderr, "xuy tebe a ne %p\n", stk->data );
     stk->hash = MurmurHash2( ( char* )stk, 5 );
 
     *( canary_t* )( ( char* )stk->data - sizeof( _LEFT_CANARY_ ) ) = _LEFT_CANARY_;

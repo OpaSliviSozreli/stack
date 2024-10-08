@@ -12,9 +12,13 @@ int stack_error( const stack_t* stk )
         return CAPACITY_IS_NEGATIVE;
     if ( stk->size > stk->capacity ) 
         return STACK_OVERFLOW;
-     if ( stk->hash != MurmurHash2( ( char* )stk, 5 ) )
+    if ( stk->left_struct_canary != 0XEDA )
+        return LEFT_CANARY_PROBLEM;
+    if ( stk->right_struct_canary != 0XDEAD )
+        return RIGHT_CANARY_PROBLEM;
+    if ( stk->hash != MurmurHash2( ( char* )stk, 5 ) )
         return HASH_PROBLEM;
-        
+
     return STACK_OK;
 }
 

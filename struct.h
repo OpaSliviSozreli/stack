@@ -22,7 +22,7 @@ struct stack_t
     ON_DEBUG( const char* file_name )
     ON_DEBUG( int line )
     stack_element_t* data;
-    size_t size;
+    size_t size; 
     int capacity;
     unsigned int hash;
     canary_t right_struct_canary;
@@ -43,6 +43,8 @@ enum ErrorCode
     CAPACITY_IS_NEGATIVE, 
     STACK_OVERFLOW,    
     CANT_OPEN_LOG_FILE,
+    LEFT_CANARY_PROBLEM,
+    RIGHT_CANARY_PROBLEM,
     HASH_PROBLEM
 };
 
